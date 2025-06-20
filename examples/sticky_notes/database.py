@@ -50,6 +50,7 @@ def init_db(path: Path = DB_PATH) -> None:
 
 
 def execute(path: Path, query: str, params: Iterable) -> None:
+    """Execute a parameterized statement and commit the result."""
     conn = sqlite3.connect(path)
     cur = conn.cursor()
     cur.execute(query, params)
@@ -58,7 +59,10 @@ def execute(path: Path, query: str, params: Iterable) -> None:
 
 
 def insert_input(input_id: str, timestamp: str, text: str, path: Path = DB_PATH) -> None:
-    execute(path, "INSERT INTO inputs(id, timestamp, text) VALUES(?, ?, ?)", (input_id, timestamp, text))
+    """Insert the raw input entry."""
+    execute(
+        path, "INSERT INTO inputs(id, timestamp, text) VALUES(?, ?, ?)", (input_id, timestamp, text)
+    )
 
 
 def insert_task(
@@ -71,6 +75,7 @@ def insert_task(
     notes: str | None,
     path: Path = DB_PATH,
 ) -> None:
+    """Insert a task entry."""
     execute(
         path,
         "INSERT INTO tasks(id, input_id, title, description, priority, due_date, notes) VALUES(?, ?, ?, ?, ?, ?, ?)",
@@ -86,6 +91,7 @@ def insert_note(
     summary: str,
     path: Path = DB_PATH,
 ) -> None:
+    """Insert a note entry."""
     execute(
         path,
         "INSERT INTO notes(id, input_id, task_id, content, summary) VALUES(?, ?, ?, ?, ?)",
@@ -94,6 +100,7 @@ def insert_note(
 
 
 def search(path: Path, query: str) -> list[str]:
+    """Return tasks or notes matching the query."""
     conn = sqlite3.connect(path)
     cur = conn.cursor()
     pattern = f"%{query}%"
